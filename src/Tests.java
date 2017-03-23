@@ -1,6 +1,8 @@
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.StringJoiner;
 
@@ -15,22 +17,6 @@ import static org.junit.Assert.*;
 public class Tests {
     Order o = null;
     Menu menu = null;
-
-    /**
-     * Этот метод подготовительный. Он всегда вызывается перед запуском любого теста или пачки тестов.
-     * В нем удобно подготавливать (prepare) объекты, которые будут подвергаться множеству тестов. Например, подключить тестовую базу данных.
-     *
-     * В нашем случае показан пример создания заказа, состоящего из первого блюда списка блюд нашего меню.
-     */
-    @Before
-    public void preparation() {
-        o = new Order();
-        Menu menu = new Menu();
-        List<Meal> menuList = new Menu().list();
-        if (!menuList.isEmpty()) {
-            o.addMeal(menuList.get(0));
-        }
-    }
 
     //-------------------------Ваши тесты --------------------------------
 
@@ -58,6 +44,7 @@ public class Tests {
     //todo Проверьте, что меню не изменяется: метод list() возвращает один и тот же список объектов
     @Test
     public void testMenu() {
+        Menu menu = new Menu();
         assertNotNull(menu.list());
         assertTrue(menu.list().size() >= 10);
         assertEquals(menu.list(),menu.list());
@@ -67,10 +54,13 @@ public class Tests {
     //todo Проверьте, что добавить в заказ можно только блюдо из меню (иначе должно кидаться исключение IllegalArgumentException
     @Test(expected= IllegalArgumentException.class)
     public void testOrder1() {
+        o = new Order();
         o.addMeal(new Meal("privet",12.5f));
     }
     @Test
     public void testOrder() {
+        o = new Order();
+        Menu menu = new Menu();
         o.addMeal(menu.list().get(0));
     }
     //todo Test 4 на цену заказа
@@ -80,6 +70,7 @@ public class Tests {
     @Test
     public void testPriceOrder() {
         Order order = new Order();
+        Menu menu = new Menu();
         assertEquals(new Float(0),order.totalSum());
         Float price = menu.list().get(0).getPrice();
         order.addMeal(menu.list().get(0));
@@ -92,13 +83,47 @@ public class Tests {
     @Test
     public void testPriceOrder1() {
         Order order = new Order();
+        Menu menu = new Menu();
         assertEquals(new Float(0),order.totalSum());
-        Float price = 15.5f;
-        Meal meal = new Meal("kok",price);
-        Float count = 1.5f;
+        Float price = menu.list().get(2).getPrice();
+        int count = 5;
         Float sum = price*count;
-        order.addMeal(meal,count);
+        order.addMeal(menu.list().get(2),count);
         assertEquals(sum,order.totalSum());
+    }
+
+    @Test(expected= IllegalArgumentException.class)
+    public void testMenu1() {
+        List<Meal> l1 = new ArrayList<>();
+        l1.add(new Meal("lol",15.0f));
+        l1.add(new Meal("lol",18.0f));
+        l1.add(new Meal("a",15.0f));
+        l1.add(new Meal("b",19.0f));
+        l1.add(new Meal("v",15.0f));
+        l1.add(new Meal("d",18.0f));
+        l1.add(new Meal("c",15.0f));
+        l1.add(new Meal("f",18.0f));
+        l1.add(new Meal("g",15.0f));
+        l1.add(new Meal("y",18.0f));
+        l1.add(new Meal("t",15.0f));
+        l1.add(new Meal("u",18.0f));
+        l1.add(new Meal("i",15.0f));
+        l1.add(new Meal("re",18.0f));
+        List<Meal> l2 = Collections.unmodifiableList(l1);
+        Menu menu = new Menu(l2);
+    }
+
+    @Test(expected= NullPointerException.class)
+    public void testMenu2() {
+        List<Meal> l1 = new ArrayList<>();
+        l1.add(new Meal("lol",15.0f));
+        l1.add(new Meal("re",18.0f));
+        l1.add(new Meal("ar",15.0f));
+        l1.add(new Meal("bt",19.0f));
+        l1.add(new Meal("vy",15.0f));
+        l1.add(new Meal("du",18.0f));
+        List<Meal> l2 = Collections.unmodifiableList(l1);
+        Menu menu = new Menu(l2);
     }
 
 }
