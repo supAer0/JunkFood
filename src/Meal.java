@@ -32,10 +32,15 @@ public class Meal {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if (obj instanceof Meal){
+    public boolean equals(Object obj) {
+        if (obj instanceof  Meal) {
             Meal m = (Meal) obj;
             return m.getTitle().equals(this.getTitle());
-        }else {return false;}
+        }
+        else {return false;}
+    }
+
+    public int hashCode() {
+        return this.title.hashCode();
     }
 }

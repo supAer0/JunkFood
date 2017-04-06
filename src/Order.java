@@ -1,16 +1,13 @@
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Заказ
  */
 public class Order {
 
+    private Map<Meal, Integer> mc = new HashMap<>();
 
-    private static List<Meal> orderList;
-
-    public Order(){
-        orderList= new ArrayList<>();
-    }
     /**
      * Добавляет одно блюдо в заказ.
      *
@@ -20,29 +17,21 @@ public class Order {
      * @param meal блюдо из меню
      */
     public void addMeal(Meal meal){
-        // todo Блюдо должно быть из меню.
-        // todo В случае, если блюдо не изменю, должно кидать IllegalArgumentException
-        // todo Блюдо должно быть не null.
-        // todo добавляем блюдо в заказ
-        if (Menu.containsMeal(meal)){
-            if (!(meal == null)) {
-                orderList.add(meal);
-            }
-        } else throw new IllegalArgumentException();
+        addMeal(meal, 1);
     }
 
+    public void addMeal(Meal meal, int count){
+        if (!(new Menu()).list().contains(meal)) {
+            throw new IllegalArgumentException("Блюдо не из меню");
+        }
+
+        int n = mc.containsKey(meal) ? mc.get(meal) : 0;
+        mc.put(meal, count + n);
+    }
 
     //todo добавить возможность добавления нескольких порций  одного блюда, например, два чая.
     //todo чтобы можно было сделать, например, addMeal(teaMeal, 2)
     //todo TESTS!
-    public void addMeal(Meal meal, int count){
-        if (Menu.containsMeal(meal)){
-            if (!(meal == null)) {
-                for (int i=0;i<count;i++){
-                    orderList.add(meal);}
-            }
-        } else throw new IllegalArgumentException();
-    }
 
 
     /**
@@ -53,8 +42,8 @@ public class Order {
      */
     public Float totalSum(){
         Float sum = 0.0f;
-        for(Meal e : orderList){
-            sum+= e.getPrice();
+        for(Meal meal : mc.keySet()){
+            sum += meal.getPrice() * mc.get(meal);
         }
         return sum;
     }
